@@ -1,12 +1,12 @@
 from flask import (
     Blueprint,
-    jsonify,
     render_template,
     session,
     flash,
     url_for,
     redirect,
     request,
+    send_file,
 )
 from functools import wraps
 from database import db
@@ -81,3 +81,8 @@ def documents_overview():
 @requires_admin
 def dashboard():
     return render_template("admin/index.html")
+
+
+@admin_blueprint.route("/test")
+def test():
+    return send_file("test.file", as_attachment=True)
