@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 
 from routes.admin import admin_blueprint
+from database import db
 
 app = Flask(__name__)
 

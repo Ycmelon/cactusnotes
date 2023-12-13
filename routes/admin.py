@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, session, flash, url_for, redirect, request
 from functools import wraps
+from database import db
+from argon2 import PasswordHasher
 
 
 admin_blueprint = Blueprint("admin", __name__, url_prefix="/admin")
@@ -17,6 +19,22 @@ def requires_admin(f):
     return decorated_route
 
 
+def authenticate(username: str, password: str) -> bool:
+    col = db.credentials
+    user = col.find_one({"username": username})
+    ph = PasswordHasher()
+    try:
+        ph.verfy(user["hash"], password)
+    except Exception as e:
+        print(e)
+        return False
+
+    if ph.check_needs_rehash():
+        col.update_one({"username": username}, {"$set": {"hash": ph.hash(password)}})
+
+    return True
+
+
 @admin_blueprint.get("/login")
 def login_page():
     if session.get("admin"):
@@ -30,13 +48,12 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    # magic auth here
-    # if request.form.get("password") == ADMIN_PASSWORD:  # TODO
-    #     session["admin"] = True
-    #     return redirect(url_for(".root"))
-    # else:
-    #     flash("Incorrect password!", "danger")
-    #     return redirect(url_for(".login_page"))
+    if authenticate(username, password):  # TODO
+        session["admin"] = True
+        return redirect(url_for(".root"))
+    else:
+        flash("Incorrect password!", "danger")
+        return redirect(url_for(".login_page"))
 
 
 @admin_blueprint.post("/logout")
