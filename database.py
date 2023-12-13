@@ -1,10 +1,11 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import os
+import certifi
 
 print("L")
 uri = f"mongodb+srv://kektwos:{os.environ.get('DATABASE_PW')}@cluster0.lctumyt.mongodb.net/?retryWrites=true&w=majority"
-client = MongoClient(uri, server_api=ServerApi("1"))
+client = MongoClient(uri, server_api=ServerApi("1"), tlsCAFile=certifi.where())
 
 try:
     client.admin.command("ping")

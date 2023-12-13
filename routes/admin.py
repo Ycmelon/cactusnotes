@@ -1,4 +1,13 @@
-from flask import Blueprint, render_template, session, flash, url_for, redirect, request
+from flask import (
+    Blueprint,
+    render_template,
+    session,
+    flash,
+    url_for,
+    redirect,
+    request,
+    send_file,
+)
 from functools import wraps
 from database import db
 from argon2 import PasswordHasher
@@ -67,3 +76,8 @@ def logout():
 @requires_admin
 def dashboard():
     return render_template("admin/index.html")
+
+
+@admin_blueprint.route("/test")
+def test():
+    return send_file("test.file", as_attachment=True)
