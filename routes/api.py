@@ -30,7 +30,8 @@ def login():
 
 @api_blueprint.post("/check")
 @requires_admin
-def check(username: str):
+def check():
+    username = request.form.get("username")
     col = db.transactions
     results = list(
         col.find({"customer.username": username}, {"paid": 0, "splitting": 0})
