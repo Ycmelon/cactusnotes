@@ -1,6 +1,5 @@
 argon2-cffi
 black
-bson
 certifi
 cachetools
 flask
