@@ -3,4 +3,5 @@ black
 certifi
 cachetools
 flask
+flask-cors
 pymongo

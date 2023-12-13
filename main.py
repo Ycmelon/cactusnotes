@@ -1,10 +1,12 @@
 from flask import Flask, render_template
+from flask_cors import CORS
 
 from routes.admin import admin_blueprint
 from routes.api import api_blueprint
 from database import db
 
 app = Flask(__name__)
+cors= CORS(app, resources={r"/api/*": {"origins": "www.carousell.sg"}})
 
 app.secret_key = "hehe"
 app.template_folder = "./routes/templates"
