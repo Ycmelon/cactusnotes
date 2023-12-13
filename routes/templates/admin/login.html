@@ -6,6 +6,14 @@
 <form action="/admin/login" method="POST">
   <div class="row mb-3">
     <div class="col-sm-3">
+      <label for="username" class="col-form-label">Username</label>
+    </div>
+    <div class="col">
+      <input type="text" name="username" class="form-control" id="username" />
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-3">
       <label for="password" class="col-form-label">Password</label>
     </div>
     <div class="col">
@@ -16,9 +24,9 @@
         id="password"
       />
     </div>
-    <div class="col-auto">
-      <input type="submit" class="btn btn-primary" value="Login" />
-    </div>
+  </div>
+  <div class="row mb-3">
+    <input type="submit" class="btn btn-primary" value="Login" />
   </div>
 </form>
 {% endblock %}
