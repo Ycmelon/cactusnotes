@@ -6,7 +6,7 @@ from routes.api import api_blueprint
 from database import db
 
 app = Flask(__name__)
-cors= CORS(app, resources={r"/api/*": {"origins": "https://www.carousell.sg"}})
+cors= CORS(app, resources={r"/api/*": {"origins": "https://www.carousell.sg"}}, supports_credentials=True)
 
 app.secret_key = "hehe"
 app.template_folder = "./routes/templates"
