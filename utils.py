@@ -1,6 +1,13 @@
 from random import sample, choices
 from argon2 import PasswordHasher
-from typing import Tuple
+from database import db
+from cachetools import cached, TTLCache
+from bson import ObjectId
+
+
+@cached(cache=TTLCache(maxsize=10, ttl=60))
+def shortname_from_id(id):
+    return db.documents.find_one({"_id": ObjectId(id)})["name"]
 
 
 def generate_passphase():
@@ -20,5 +27,46 @@ def salted_password_hash(password: str) -> str:
     return ph.hash(password)
 
 
-hash1 = salted_password_hash("abc123")
-print(hash1)
+def create_user():
+    from getpass import getpass
+
+    col = db.credentials.insert_one(
+        {
+            "username": input("Username: "),
+            "hash": salted_password_hash(getpass()),
+            "display_name": input("Name: "),
+        }
+    )
+
+
+def check(username: str):
+    col = db.transactions
+    results = list(
+        col.find({"customer.username": username}, {"paid": 0, "splitting": 0})
+    )
+
+    data = {"url": None, "pin": None, "authorised": [], "transactions": []}
+    if len(results) == 0:
+        return data
+
+    for r in results:  # each r is a transaction
+        # from each transaction: require date + money +
+        # what is bought (doc_id, shortname and chapters)
+        data["transactions"].append(
+            {
+                "date": r["date"],
+                "money": r["money"],
+                "bought": [
+                    {
+                        "id": item["doc_id"],
+                        "shortname": shortname_from_id(item["doc_id"]),
+                        "chapters": item["chapters"],
+                    }
+                    for item in r["sold"]
+                ],
+            }
+        )
+    return data
+
+
+print(check("jeff bozos"))

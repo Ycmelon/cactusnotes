@@ -1,4 +1,13 @@
-from flask import Blueprint, render_template, session, flash, url_for, redirect, request
+from flask import (
+    Blueprint,
+    jsonify,
+    render_template,
+    session,
+    flash,
+    url_for,
+    redirect,
+    request,
+)
 from functools import wraps
 from database import db
 from argon2 import PasswordHasher
@@ -24,12 +33,12 @@ def authenticate(username: str, password: str) -> bool:
     user = col.find_one({"username": username})
     ph = PasswordHasher()
     try:
-        ph.verfy(user["hash"], password)
+        ph.verify(user["hash"], password)
     except Exception as e:
         print(e)
         return False
 
-    if ph.check_needs_rehash():
+    if ph.check_needs_rehash(user["hash"]):
         col.update_one({"username": username}, {"$set": {"hash": ph.hash(password)}})
 
     return True
@@ -48,12 +57,12 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    if authenticate(username, password):  # TODO
+    if authenticate(username, password):
         session["admin"] = True
-        return redirect(url_for(".root"))
-    else:
-        flash("Incorrect password!", "danger")
-        return redirect(url_for(".login_page"))
+        return redirect(url_for(".dashboard"))
+
+    flash("Incorrect password!", "danger")
+    return redirect(url_for(".login_page"))
 
 
 @admin_blueprint.post("/logout")
@@ -61,6 +70,11 @@ def logout():
     session.pop("admin")
 
     return redirect(url_for(".login_page"))
+
+
+@admin_blueprint.get("/documents")
+def documents_overview():
+    return "1"
 
 
 @admin_blueprint.route("/")

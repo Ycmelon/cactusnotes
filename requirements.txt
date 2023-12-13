@@ -1,0 +1,6 @@
+argon2-cffi
+black
+bson
+cachetools
+flask
+pymongo
