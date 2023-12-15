@@ -1,0 +1,19 @@
+{% extends "access/template.html" %}
+<!-- -->
+{% block title %}Login{% endblock %}
+<!-- -->
+{% block content %}
+<form method="POST">
+  <div class="row mb-3">
+    <div class="col-sm-3">
+      <label for="pin" class="col-form-label">PIN</label>
+    </div>
+    <div class="col">
+      <input type="number" name="pin" class="form-control" id="pin" />
+    </div>
+  </div>
+  <div class="row mb-3">
+    <input type="submit" class="btn btn-primary" value="Login" />
+  </div>
+</form>
+{% endblock %}
