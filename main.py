@@ -52,7 +52,7 @@ def get_script():  # tampermonkey script
         script = file.read()
 
     with open("./extension/sidebar.html", "r") as file:
-        script.replace("{{ sidebar }}", file.read())
+        script = script.replace("{{ sidebar }}", file.read())
 
     return script
 
