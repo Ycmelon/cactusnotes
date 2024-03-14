@@ -61,7 +61,6 @@ function startObserver() {
 
 window.addEventListener("load", () => {
   GM_addStyle(GM_getResourceText("bt")); // load isolated bootstrap
-  addSidebar();
 
   // wait for chat interface to load, then grab the username
   const observer = new MutationObserver(function (_, mutationInstance) {
@@ -69,6 +68,7 @@ window.addEventListener("load", () => {
     if (someDiv) {
       const username = someDiv.href.split("/").at(-2);
 
+      addSidebar(); // only load interface after first user appears
       changeUser(username);
 
       startObserver();
