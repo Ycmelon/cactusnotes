@@ -29,7 +29,7 @@ customer_blueprint = Blueprint(
 
 @customer_blueprint.get("/<code>")
 def access_customer(code: str):
-    customer = db.customers.find_one({"link": code})
+    customer = db.customers.find_one({"link": code.strip()})
 
     if customer is None:  # this code is invalid
         abort(404)
@@ -50,9 +50,9 @@ def access_customer(code: str):
 
 @customer_blueprint.post("/<code>")
 def customer_login(code: str):
-    pin = request.form.get("pin")
+    pin = request.form.get("pin", "").strip()
 
-    customer = db.customers.find_one({"link": code})
+    customer = db.customers.find_one({"link": code.strip()})
     if customer is None:
         abort(404)
 

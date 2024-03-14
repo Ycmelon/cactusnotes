@@ -40,7 +40,7 @@ def requires_admin(f):
 @extension_blueprint.get("/get_customer")
 @requires_admin
 def get_customer():
-    username = request.args.get("username", "")
+    username = request.args.get("username", "").strip()
 
     # get customer information
     customer: Union[dict, None] = db.customers.find_one(
@@ -72,7 +72,7 @@ def get_customer():
 @extension_blueprint.post("/update_customer")
 @requires_admin
 def update():
-    username = request.args["username"]
+    username = request.args["username"].strip()
     curr_url = url_for(
         ".get_customer",
         username=username,
