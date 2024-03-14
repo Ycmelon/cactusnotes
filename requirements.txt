@@ -5,3 +5,4 @@ cachetools
 flask
 flask-cors
 pymongo
+pymupdf

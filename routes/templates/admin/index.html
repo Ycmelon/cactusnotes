@@ -15,6 +15,50 @@
 </div>
 
 <br />
-<p>Sales graphs and charts here...</p>
-<!-- <img src="https://source.unsplash.com/1280x720/?cactus" style="width: 100%" /> -->
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Total</th>
+      <th scope="col">Marcus</th>
+      <th scope="col">Ethan</th>
+      <th scope="col">Yu Chen</th>
+      <th scope="col">Jason</th>
+      <th scope="col">Junxiang</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Paid (new portal)</th>
+      <td>{{ paid["total"] | format_money }}</td>
+      <td>{{ paid["marcus"] | format_money }}</td>
+      <td>{{ paid["ethan"] | format_money }}</td>
+      <td>{{ paid["yc"] | format_money }}</td>
+      <td>{{ paid["jason"] | format_money }}</td>
+      <td>{{ paid["jx"] | format_money }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Due payout</th>
+      <td>{{ due["total"] | format_money }}</td>
+      <td>{{ due["marcus"] | format_money }}</td>
+      <td>{{ due["ethan"] | format_money }}</td>
+      <td>{{ due["yc"] | format_money }}</td>
+      <td>{{ due["jason"] | format_money }}</td>
+      <td>{{ due["jx"] | format_money }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Total</th>
+      <td>{{ total["total"] | format_money }}</td>
+      <td>{{ total["marcus"] | format_money }}</td>
+      <td>{{ total["ethan"] | format_money }}</td>
+      <td>{{ total["yc"] | format_money }}</td>
+      <td>{{ total["jason"] | format_money }}</td>
+      <td>{{ total["jx"] | format_money }}</td>
+    </tr>
+  </tbody>
+</table>
+<a href="./create_transaction" class="btn btn-primary">Create transaction</a>
+<form action="./payout" method="POST" onsubmit="confirm('Confirm payout now?')">
+  <input type="submit" class="btn btn-success" value="Payout now" />
+</form>
 {% endblock %}

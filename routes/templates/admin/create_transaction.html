@@ -1,0 +1,66 @@
+{% extends "admin/template.html" %}
+<!--  -->
+{% block title %}Home{% endblock %}
+<!--  -->
+{% block content %}
+<h1>Create transaction</h1>
+<p>e.g. To account for purchase of Carousell coins</p>
+
+<br />
+<form method="POST">
+  <div class="row mb-3">
+    <div class="col-sm-3">
+      <label for="customer" class="col-form-label">Customer</label>
+    </div>
+    <div class="col">
+      <input
+        type="text"
+        name="customer"
+        class="form-control"
+        id="customer"
+        placeholder="e.g. put a dash here"
+      />
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-sm-3">
+      <label for="amount" class="col-form-label">Amount</label>
+    </div>
+    <div class="col">
+      <div class="input-group">
+        <span class="input-group-text">$</span>
+        <input
+          type="text"
+          name="amount"
+          class="form-control"
+          id="amount"
+          placeholder="e.g. -25.50"
+        />
+      </div>
+    </div>
+  </div>
+  <h5>Split</h5>
+  {% for admin in ["ethan", "marcus", "yc", "jason", "jx"] %}
+  <div class="row mb-3">
+    <div class="col-sm-3">
+      <label for="split-{{admin}}" class="col-form-label"
+        >Fraction ({{ admin }})</label
+      >
+    </div>
+    <div class="col">
+      <input
+        type="text"
+        name="split-{{admin}}"
+        class="form-control"
+        id="split-{{admin}}"
+        placeholder="e.g. 0.1 or 0.6 or 1"
+      />
+    </div>
+  </div>
+  {% endfor %}
+  <div class="row mb-3">
+    <input type="submit" class="btn btn-primary" value="Create" />
+  </div>
+</form>
+<!-- <img src="https://source.unsplash.com/1280x720/?cactus" style="width: 100%" /> -->
+{% endblock %}

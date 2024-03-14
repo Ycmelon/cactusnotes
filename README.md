@@ -1,6 +1,6 @@
 # Cactusnotes Sales Portal
 
-## Developement
+## Development
 
 1. Create a venv
 2. Install dependencies from requirements.txt

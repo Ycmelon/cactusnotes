@@ -1,4 +1,3 @@
-import os
 import subprocess
 
 
@@ -7,7 +6,8 @@ def rclone_pull():
         [
             "rclone",
             "copy",
-            f"{os.environ['RCLONE_S3_CONN_STRING']}:{os.environ['S3_BUCKET']}",
+            # f"{os.environ['RCLONE_S3_CONN_STRING']}:{os.environ['S3_BUCKET']}",
+            "cactusnotes:",
             "./drive",
             "--max-depth",
             "1",
