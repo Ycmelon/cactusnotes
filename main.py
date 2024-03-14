@@ -51,13 +51,10 @@ def get_script():  # tampermonkey script
     with open("./extension/script.js", "r") as file:
         script = file.read()
 
-    with open("./extension/sidebar.html", "r") as file:
-        script = script.replace("{{ sidebar }}", file.read())
-
     return script
 
 
 rclone_pull()
 
 if __name__ == "__main__":
-    app.run("0.0.0.0")
+    app.run("0.0.0.0", debug=True)

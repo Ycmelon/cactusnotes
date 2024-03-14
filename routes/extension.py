@@ -41,7 +41,7 @@ def requires_admin(f):
 @extension_blueprint.get("/get_customer")
 @requires_admin
 def get_customer():
-    username = request.args["username"]
+    username = request.args.get("username", "")
 
     # get customer information
     customer: Union[dict, None] = db.customers.find_one(
@@ -65,7 +65,10 @@ def get_customer():
     # TODO remove duplicates (although shouldnt happen)
 
     return render_template(
-        "extension/chat.html", **customer, all_documents=get_all_documents()
+        "extension/chat.html",
+        **customer,
+        all_documents=get_all_documents(),
+        extension_mode=True if request.args.get("extension_mode") else False
     )
 
 

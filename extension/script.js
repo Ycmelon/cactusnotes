@@ -2,24 +2,25 @@ function addSidebar() {
   document.querySelector("main>div>div>div:nth-of-type(3)").remove(); // random spacing
 
   const sidebar = document.createElement("div");
+
   sidebar.id = "my-sidebar";
   sidebar.classList.add("bootstrap5");
-  sidebar.setAttribute("style", "flex:0.75;padding:10px");
+  sidebar.setAttribute("style", "flex:0.75; overflow-y: hidden;");
+  sidebar.innerHTML = `<iframe id="iframe" style="height: 100%; width: 100%; outline: none;">`;
 
-  sidebar.innerHTML = `{{ sidebar }}`;
   document.querySelector("main#main>div>div").append(sidebar);
 }
 
-function toggleCondensedView() {
-  if (document.querySelector("#condensed-styles") == null) {
-    const style = document.createElement("style");
-    style.setAttribute("id", "condensed-styles");
-    style.innerHTML = "body {background-color: green}";
-    document.querySelector("head").append(style);
-  } else {
-    document.querySelector("#condensed-styles").remove();
-  }
-}
+// function toggleCondensedView() {
+//   if (document.querySelector("#condensed-styles") == null) {
+//     const style = document.createElement("style");
+//     style.setAttribute("id", "condensed-styles");
+//     style.innerHTML = "body {background-color: green}";
+//     document.querySelector("head").append(style);
+//   } else {
+//     document.querySelector("#condensed-styles").remove();
+//   }
+// }
 
 function pasteInChat(text) {
   const textarea = document.querySelector("textarea");
@@ -30,18 +31,22 @@ function pasteInChat(text) {
   textarea.focus();
 }
 
+function changeUser(username) {
+  document.querySelector(
+    "#iframe"
+  ).src = `https://cactusnotes.co/extension/get_customer?username=${encodeURIComponent(
+    username
+  )}&extension_mode=true`;
+}
+
 function startObserver() {
   // check for change in focused chat
   const targetNode = document.querySelector("a[href^='/u/']");
-  const callback = (mutationList, observer) => {
+  const callback = (mutationList, _) => {
     for (const mutation of mutationList) {
       if (mutation.type === "attributes" && mutation.attributeName == "href") {
         const newUser = mutation.target.href.split("/").at(-2);
-        document.querySelector(
-          "#iframe"
-        ).src = `https://cactusnotes.co/extension/get_customer?username=${encodeURIComponent(
-          newUser
-        )}`;
+        changeUser(newUser);
       }
     }
   };
@@ -59,16 +64,12 @@ window.addEventListener("load", () => {
   addSidebar();
 
   // wait for chat interface to load, then grab the username
-  const observer = new MutationObserver(function (mutations, mutationInstance) {
+  const observer = new MutationObserver(function (_, mutationInstance) {
     const someDiv = document.querySelector("a[href^='/u/']");
     if (someDiv) {
       const username = someDiv.href.split("/").at(-2);
 
-      document.querySelector(
-        "#iframe"
-      ).src = `https://cactusnotes.co/extension/get_customer?username=${encodeURIComponent(
-        username
-      )}`;
+      changeUser(username);
 
       startObserver();
       mutationInstance.disconnect();
@@ -84,14 +85,9 @@ window.addEventListener("load", () => {
     "message",
     (event) => {
       if (event.origin == "https://www.carousell.sg") return;
+
       pasteInChat(event.data);
     },
     false
   );
-
-  document.querySelectorAll("div.copypasta-card").forEach((card) => {
-    card.addEventListener("click", (event) => {
-      pasteInChat(card.innerText);
-    });
-  });
 });

@@ -57,8 +57,32 @@
     </tr>
   </tbody>
 </table>
-<a href="./create_transaction" class="btn btn-primary">Create transaction</a>
-<form action="./payout" method="POST" onsubmit="confirm('Confirm payout now?')">
-  <input type="submit" class="btn btn-success" value="Payout now" />
-</form>
+<div class="row justify-content-between">
+  <div class="col-auto">
+    <a href="/extension/get_customer" class="btn btn-outline-primary"
+      >Sales portal</a
+    >
+  </div>
+
+  <div class="col-auto row gx-2">
+    <div class="col-auto">
+      <a href="./create_transaction" class="btn btn-outline-primary"
+        >Create transaction</a
+      >
+    </div>
+    <div class="col-auto">
+      <form
+        action="./payout"
+        method="POST"
+        onsubmit="confirm('Confirm payout now?')"
+      >
+        <input
+          type="submit"
+          class="btn btn-outline-success"
+          value="Payout now"
+        />
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}
