@@ -54,6 +54,11 @@ def get_samples():
     return redirect("https://linktr.ee/cactusnotes")
 
 
+@app.get("/")
+def index():  # no home page yet so samples i guess
+    return redirect("https://linktr.ee/cactusnotes")
+
+
 rclone_pull()
 
 if __name__ == "__main__":

@@ -68,7 +68,7 @@ def customer_login(code: str):
 @customer_blueprint.get("/download/studyguide/<shortname>")
 def download_studyguide(shortname: str):
     if session.get("customer") is None:  # not signed in
-        return redirect(url_for(".customer_login"))
+        abort(401)
 
     transactions = db.transactions.find({"customer": session["customer"]})
     documents = get_documents_from_transactions(
@@ -76,7 +76,7 @@ def download_studyguide(shortname: str):
     )  # gets all documents, so potentially inefficient
 
     if shortname not in documents:
-        return "403 Forbidden: You do not have access to this document", 403
+        abort(403)
 
     filename = get_document_info_from_shortname(shortname)["studyguide"]
 
@@ -86,7 +86,7 @@ def download_studyguide(shortname: str):
 @customer_blueprint.get("/download/<shortname>")
 def download_document(shortname: str):
     if session.get("customer") is None:  # not signed in
-        return redirect(url_for(".customer_login"))
+        abort(401)
 
     transactions = db.transactions.find({"customer": session["customer"]})
     documents = get_documents_from_transactions(
@@ -94,7 +94,7 @@ def download_document(shortname: str):
     )  # gets all documents, so potentially inefficient
 
     if shortname not in documents:
-        return "403 Forbidden: You do not have access to this document", 403
+        abort(403)
 
     filename = get_document_info_from_shortname(shortname)["filename"]
     if len(documents[shortname]) == 0:  # full file
@@ -129,6 +129,19 @@ def not_found(error):
             "customer/message.html",
             content="Link not found, please check for typos!",
             title="Not found",
+        ),
+        404,
+    )
+
+
+@customer_blueprint.errorhandler(401)
+@customer_blueprint.errorhandler(403)
+def auth_errors(error):
+    return (
+        render_template(
+            "customer/message.html",
+            content=f"Please login again via the link provided to you! ({error})",
+            title="Authentication error",
         ),
         404,
     )
