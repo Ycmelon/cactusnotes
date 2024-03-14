@@ -38,7 +38,7 @@ PIN: ${document.querySelector("#form-pin").value}`);
   <div class="container px-0" style="max-width: 600px">
 
     <nav>
-      <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+      <div class="nav nav-tabs mb-2" id="nav-tab" role="tablist">
         <button
           class="nav-link active"
           id="nav-sale-tab"
@@ -99,18 +99,18 @@ PIN: ${document.querySelector("#form-pin").value}`);
     {% endif %} {% endwith %}
     <div class="row align-items-center gx-2 mb-2">
       <div class="col">
-        <label class="form-label mb-0 h5">
+        <label class="form-label mb-0">
           Welcome, {{ session["admin"] }}
         </label>
       </div>
       {% if not extension_mode %}
       <div class="col-auto">
-        <a href="/admin/" class="btn btn-outline-primary">Back to dashboard</a>
+        <a href="/admin/" class="btn btn-outline-primary btn-sm">Dashboard</a>
       </div>
       {% endif %}
       <div class="col-auto">
         <form action="/admin/logout" method="POST">
-          <input type="submit" class="btn btn-primary" value="Log out" />
+          <input type="submit" class="btn btn-primary btn-sm" value="Log out" />
         </form>
       </div>
     </div>
@@ -137,8 +137,10 @@ PIN: ${document.querySelector("#form-pin").value}`);
       }
     </script>
     {% endif %}
-    <hr />
-    <div class="mb-3">
+
+    {% if username %}
+    <hr class="my-2"/>
+    <div class="mb-2">
       <label class="form-label" for="current-customer">Current customer</label>
       <input
         type="text"
@@ -149,10 +151,10 @@ PIN: ${document.querySelector("#form-pin").value}`);
       />
     </div>
     <form
-      action="./update_customer?username={{ username | urlencode }}"
+      action="./update_customer?username={{ username | urlencode }}&extension_mode={% if extension_mode %}true{% endif %}"
       method="POST"
     >
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="form-link" class="form-label"
           >User link {% if extension_mode %}(<a class="link-primary" href="#" onclick="pasteLink()">copy to chat</a>)
             {% else %}(<a class="link-primary" href="#" onclick="copyLink()">copy to clipboard</a>)
@@ -166,7 +168,7 @@ PIN: ${document.querySelector("#form-pin").value}`);
           value="cactusnotes.co/{{ link }}"
         />
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="form-pin" class="form-label">PIN</label>
         <input
           type="text"
@@ -178,7 +180,7 @@ PIN: ${document.querySelector("#form-pin").value}`);
         />
       </div>
       <label for="form-documents" class="form-label">Documents</label>
-      <div class="form-control mb-3" id="form-documents">
+      <div class="form-control mb-2" id="form-documents">
         {% for doc in all_documents %}
         <div class="form-check">
           <input class="form-check-input" type="checkbox" id="doc-{{
@@ -203,7 +205,7 @@ PIN: ${document.querySelector("#form-pin").value}`);
         </div>
         {% endfor %}
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label for="form-transactions" class="form-label">Transactions</label>
         <table class="table table-bordered">
           <tr>
@@ -247,7 +249,7 @@ PIN: ${document.querySelector("#form-pin").value}`);
         <button class="btn btn-primary">Update</button>
       </div>
     </form>
-
+    {% endif %}
 
       </div>
       <div class="tab-pane fade" id="nav-copypasta" role="tabpanel">

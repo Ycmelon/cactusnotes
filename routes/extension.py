@@ -157,4 +157,10 @@ def update():
 
     flash("Updated")
 
-    return redirect(url_for(".get_customer", username=username))
+    return redirect(
+        url_for(
+            ".get_customer",
+            username=username,
+            extension_mode=request.args.get("extension_mode"),
+        )
+    )
