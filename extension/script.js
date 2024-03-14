@@ -39,7 +39,7 @@ function startObserver() {
         const newUser = mutation.target.href.split("/").at(-2);
         document.querySelector(
           "#iframe"
-        ).src = `http://192.168.1.95:5000/extension/get_customer?username=${encodeURIComponent(
+        ).src = `https://cactusnotes.co/extension/get_customer?username=${encodeURIComponent(
           newUser
         )}`;
       }
@@ -66,7 +66,7 @@ window.addEventListener("load", () => {
 
       document.querySelector(
         "#iframe"
-      ).src = `http://192.168.1.95:5000/extension/get_customer?username=${encodeURIComponent(
+      ).src = `https://cactusnotes.co/extension/get_customer?username=${encodeURIComponent(
         username
       )}`;
 
