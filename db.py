@@ -8,7 +8,9 @@ import certifi
 # load_dotenv()
 
 uri = f"mongodb+srv://kektwos:{os.environ.get('DATABASE_PW')}@cluster0.lctumyt.mongodb.net/?retryWrites=true&w=majority"
-client = MongoClient(uri, server_api=ServerApi("1"), tlsCAFile=certifi.where())
+client = MongoClient(
+    uri, server_api=ServerApi("1"), tlsCAFile=certifi.where(), connect=False
+)
 
 # try:
 #     client.admin.command("ping")
