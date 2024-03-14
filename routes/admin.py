@@ -27,7 +27,7 @@ def authenticate(username: str, password: str) -> bool:
         return False
 
     try:
-        ph.verify(user["hash"], password)
+        ph.verify(user.get("hash", ""), password)
     except Exception as e:
         print(e)
         return False
@@ -119,6 +119,7 @@ def dashboard():
 
 
 @admin_blueprint.post("/payout")
+@requires_admin
 def payout():
     timestamp = get_current_timestamp()
 
@@ -133,13 +134,37 @@ def payout():
 
 
 @admin_blueprint.get("/create_transaction")
+@requires_admin
 def create_transaction_form():
     return render_template("admin/create_transaction.html")
 
 
 @admin_blueprint.post("/create_transaction")
+@requires_admin
 def create_transaction():
     timestamp = get_current_timestamp()
+
+    if not request.form.get("customer") or not request.form.get("amount"):
+        flash("Please fill all fields", "danger")
+        return redirect(url_for(".create_transaction"))
+
+    try:
+        total_split = sum(
+            [
+                float(request.form["split-ethan"]),
+                float(request.form["split-marcus"]),
+                float(request.form["split-yc"]),
+                float(request.form["split-jason"]),
+                float(request.form["split-jx"]),
+            ]
+        )
+        assert abs(total_split - 1) < 0.001 or abs(total_split) < 0.001
+    except:
+        flash(
+            "There is an issue with the split (either invalid numbers entered or it doesn't add to 1 or 0)",
+            "danger",
+        )
+        return redirect(url_for(".create_transaction"))
 
     db.transactions.insert_one(
         {

@@ -76,7 +76,7 @@ def download_studyguide(shortname: str):
     )  # gets all documents, so potentially inefficient
 
     if shortname not in documents:
-        abort(403)
+        return "403 Forbidden: You do not have access to this document", 403
 
     filename = get_document_info_from_shortname(shortname)["studyguide"]
 
@@ -94,7 +94,7 @@ def download_document(shortname: str):
     )  # gets all documents, so potentially inefficient
 
     if shortname not in documents:
-        abort(403)
+        return "403 Forbidden: You do not have access to this document", 403
 
     filename = get_document_info_from_shortname(shortname)["filename"]
     if len(documents[shortname]) == 0:  # full file
@@ -116,7 +116,31 @@ def download_document(shortname: str):
         return send_file(sliced_filename, as_attachment=True)
 
 
-@customer_blueprint.route("/logout")
+@customer_blueprint.post("/logout")
 def customer_logout():
     session.pop("customer")
     return "Logged out"
+
+
+@customer_blueprint.errorhandler(404)
+def not_found(error):
+    return (
+        render_template(
+            "customer/message.html",
+            content="Link not found, please check for typos!",
+            title="Not found",
+        ),
+        404,
+    )
+
+
+@customer_blueprint.errorhandler(500)
+def unknown_error(error):
+    return (
+        render_template(
+            "customer/message.html",
+            content=f"An unknown error occured, please contact us! ({error})",
+            title="Unknown error",
+        ),
+        500,
+    )

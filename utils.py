@@ -25,11 +25,11 @@ def salted_password_hash(password: str) -> str:
 def create_user():
     from getpass import getpass
 
-    col = db.credentials.insert_one(
+    db.credentials.insert_one(
         {
             "username": input("Username: "),
             "hash": salted_password_hash(getpass()),
-            "display_name": input("Name: "),
+            # "display_name": input("Name: "),
         }
     )
 

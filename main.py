@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from flask_cors import CORS
 
 from dotenv import load_dotenv
@@ -22,11 +22,6 @@ from rclone import rclone_pull
 
 
 app = Flask(__name__)
-# cors = CORS(
-#     app,
-#     resources={r"/api/*": {"origins": "https://www.carousell.sg"}},
-#     supports_credentials=True,
-# )
 
 app.secret_key = "hehe"
 app.template_folder = "./routes/templates"
@@ -52,6 +47,11 @@ def get_script():  # tampermonkey script
         script = file.read()
 
     return script
+
+
+@app.get("/samples")
+def get_samples():
+    return redirect("https://linktr.ee/cactusnotes")
 
 
 rclone_pull()

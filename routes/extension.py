@@ -5,7 +5,6 @@ from flask import (
     redirect,
     request,
     session,
-    abort,
     render_template,
     url_for,
 )
@@ -62,8 +61,6 @@ def get_customer():
     )
     customer["documents"] = get_documents_from_transactions(customer["transactions"])
 
-    # TODO remove duplicates (although shouldnt happen)
-
     return render_template(
         "extension/chat.html",
         **customer,
@@ -76,15 +73,20 @@ def get_customer():
 @requires_admin
 def update():
     username = request.args["username"]
+    curr_url = url_for(
+        ".get_customer",
+        username=username,
+        extension_mode=request.args.get("extension_mode"),
+    )
 
     if "amount" not in request.form or request.form["amount"] == "":
         flash("Missing amount")
-        return redirect(url_for(".get_customer", username=username))
+        return redirect(curr_url)
     try:
         float(request.form["amount"])
     except ValueError:
         flash("Invalid amount")
-        return redirect(url_for(".get_customer", username=username))
+        return redirect(curr_url)
 
     # get submitted documents
     documents = {}
@@ -100,7 +102,11 @@ def update():
             if not doc in documents:
                 continue
 
-            documents[doc] = rangestr_to_list(value)
+            try:
+                documents[doc] = rangestr_to_list(value)
+            except:
+                flash("Invalid range of chapters somewhere")
+                return redirect(curr_url)
 
     # get previous documents
     transactions = list(db.transactions.find({"customer": username}, {"_id": 0}))
@@ -157,10 +163,4 @@ def update():
 
     flash("Updated")
 
-    return redirect(
-        url_for(
-            ".get_customer",
-            username=username,
-            extension_mode=request.args.get("extension_mode"),
-        )
-    )
+    return redirect(curr_url)
