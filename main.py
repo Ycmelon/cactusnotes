@@ -1,3 +1,4 @@
+import os
 from flask import Flask, redirect
 from flask_cors import CORS
 
@@ -26,6 +27,9 @@ app = Flask(__name__)
 app.secret_key = "hehe"
 app.template_folder = "./routes/templates"
 
+# for chrome-based browsers
+app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
+
 # custom filters
 app.jinja_env.filters["rangelist_to_str"] = rangelist_to_str
 app.jinja_env.filters["documents_to_items_str"] = documents_to_items_str
@@ -43,8 +47,12 @@ app.register_blueprint(customer_blueprint)
 
 @app.get("/script")
 def get_script():  # tampermonkey script
+    domain = "http://localhost:5000"
+    if os.environ.get("MODE") == "production":
+        domain = "https://cactusnotes.co"
+
     with open("./extension/script.js", "r") as file:
-        script = file.read()
+        script = file.read().replace("{{ domain }}", domain)
 
     return script
 
@@ -62,4 +70,4 @@ def index():  # no home page yet so samples i guess
 rclone_pull()
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", debug=True)
+    app.run(debug=True)

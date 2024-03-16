@@ -32,11 +32,14 @@ function pasteInChat(text) {
 }
 
 function changeUser(username) {
-  document.querySelector(
-    "#iframe"
-  ).src = `https://cactusnotes.co/extension/get_customer?username=${encodeURIComponent(
-    username
-  )}&extension_mode=true`;
+  document
+    .querySelector("#iframe")
+    .setAttribute(
+      "src",
+      `{{ domain }}/extension/get_customer?username=${encodeURIComponent(
+        username
+      )}&extension_mode=true`
+    );
 }
 
 function startObserver() {
