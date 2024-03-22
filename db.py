@@ -9,7 +9,11 @@ import certifi
 
 uri = f"mongodb+srv://kektwos:{os.environ.get('DATABASE_PW')}@cluster0.lctumyt.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(
-    uri, server_api=ServerApi("1"), tlsCAFile=certifi.where(), connect=False
+    uri,
+    server_api=ServerApi("1"),
+    tlsCAFile=certifi.where(),
+    connect=False,
+    maxPoolSize=1,
 )
 
 # try:
