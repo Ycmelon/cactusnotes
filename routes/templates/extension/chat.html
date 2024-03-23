@@ -11,28 +11,6 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
   />
-  <script>
-    function paste(text) {
-      window.parent.postMessage(text, "https://www.carousell.sg");
-    }
-
-    function pasteLink() {
-      paste(`Kindly find your notes at the link below:
-${document.querySelector("#form-link").value}
-PIN: ${document.querySelector("#form-pin").value}`);
-    }
-
-    function copy(text) {
-      navigator.clipboard.writeText(text).then(() => {});
-    }
-
-    function copyLink() {
-      copy(`Kindly find your notes at the link below:
-${document.querySelector("#form-link").value}
-PIN: ${document.querySelector("#form-pin").value}`);
-    }
-  </script>
-  <style></style>
 </head>
 <body style="margin: 10px">
   <div class="container px-0" style="max-width: 600px">
@@ -167,14 +145,24 @@ PIN: ${document.querySelector("#form-pin").value}`);
           <div class="mb-2">
             <label for="form-link" class="form-label"
               >User link {% if extension_mode %}(<a
+                id="copy-paste-button"
                 class="link-primary"
                 href="#"
                 onclick="pasteLink()"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Pasted!"
+                data-bs-trigger="manual"
                 >copy to chat</a
               >) {% else %}(<a
+                id="copy-paste-button"
                 class="link-primary"
                 href="#"
                 onclick="copyLink()"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Copied!"
+                data-bs-trigger="manual"
                 >copy to clipboard</a
               >) {% endif %}</label
             >
@@ -285,14 +273,10 @@ PIN: ${document.querySelector("#form-pin").value}`);
             cursor: pointer;
           }
         </style>
+        <p>
+          Click on a card to {% if extension_mode %}paste into chat{% else %}copy to clipboard{% endif %}
+        </p>
 
-        <div class="card mb-2 copypasta-card">
-          <div class="p-2">
-            Hi, thank you for your interest! Would you like to take a look at
-            our samples first? The samples can be found at
-            cactusnotes.co/samples
-          </div>
-        </div>
         <div class="card mb-2 copypasta-card">
           <div class="p-2">
             Hi, thank you for your interest! The samples can be found at
@@ -307,10 +291,42 @@ PIN: ${document.querySelector("#form-pin").value}`);
         </div>
         <div class="card mb-2 copypasta-card">
           <div class="p-2">
+            <p class="m-0">Science - 54 Pages</p>
+            <p class="m-0">History - 50 Pages</p>
+            <p class="m-0">Geography - 56 Pages</p>
+          </div>
+        </div>
+        <div class="card mb-2 copypasta-card">
+          <div class="p-2">
+            For lower sec, we have a bundle for Science, Geography and History, let me know if you have any queries!
+          </div>
+        </div>
+        <div class="card mb-2 copypasta-card">
+          <div class="p-2">
+            Our notes are made according to the latest MOE syllabus for Express/G3 so not to worry!
+          </div>
+        </div>
+        <div class="card mb-2 copypasta-card">
+          <div class="p-2">
+            You can then Paylah/Paynow 8382 2344 (M.) and we will send you a download link for the softcopy PDF notes within 24 hours😄 Do remember to send over the proof of payment!
+          </div>
+        </div>
+        <div class="card mb-2 copypasta-card">
+          <div class="p-2">
+            You will be able to download the notes using a button on the top right! Let me know if you need any assistance. We will appreciate if you could help leave a review if the notes are up to your expectations :)
+          </div>
+        </div>
+        <div class="card mb-2 copypasta-card">
+          <div class="p-2">
             Do let us know if you face any difficulties downloading or if you
             have any queries academic or otherwise. We will appreciate if you
             could help leave a review if the notes are up to your expectations
             :)
+          </div>
+        </div>
+        <div class="card mb-2 copypasta-card">
+          <div class="p-2">
+            Prompt and responsive buyer, highly recommend! Hope you enjoy the notes and for us to deal again :)
           </div>
         </div>
       </div>
@@ -371,22 +387,60 @@ PIN: ${document.querySelector("#form-pin").value}`);
       });
     </script>
 
-    <script>
-      document.querySelectorAll("div.copypasta-card").forEach((card) => {
-        card.addEventListener("click", (event) => {
-          //{% if extension_mode %}
-          paste(card.innerText);
-          //{% else %}
-          copy(card.innerText);
-          //{% endif %}
-        });
-      });
-    </script>
-
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+
+    <script>
+      const copyPasteButton = new bootstrap.Tooltip(document.querySelector("#copy-paste-button"));
+
+      function paste(text) {
+        window.parent.postMessage(text, "https://www.carousell.sg");
+      }
+  
+      function pasteLink() {
+        copyPasteButton.show();
+        setTimeout(() => { copyPasteButton.hide() }, 1000);
+
+        paste(`Kindly find your notes at the link below:
+  ${document.querySelector("#form-link").value}
+  PIN: ${document.querySelector("#form-pin").value}`);
+      }
+  
+      function copy(text) {
+        navigator.clipboard.writeText(text).then(() => {});
+      }
+  
+      function copyLink() {
+        copyPasteButton.show();
+        setTimeout(() => { copyPasteButton.hide() }, 1000);
+
+        copy(`Kindly find your notes at the link below:
+  ${document.querySelector("#form-link").value}
+  PIN: ${document.querySelector("#form-pin").value}`);
+      }
+    </script>
+
+    <script>
+      document.querySelectorAll("div.copypasta-card").forEach((card) => {
+        card.addEventListener("click", (event) => {
+          card.setAttribute("data-bs-toggle", "tooltip");
+          card.setAttribute("data-bs-placement", "bottom");
+          card.setAttribute("data-bs-trigger", "manual");
+          card.setAttribute("title", "{% if extension_mode %}Pasted!{% else %}Copied!{% endif %}");
+          const tooltip = new bootstrap.Tooltip(card);
+          tooltip.show();
+          setTimeout(() => { tooltip.hide() }, 1000);
+
+          //{% if extension_mode %}
+          paste(card.innerText.replace(/\n+\s*\n+/g, "\n"));
+          //{% else %}
+          copy(card.innerText.replace(/\n+\s*\n+/g, "\n"));
+          //{% endif %}
+        });
+      });
+    </script>
   </div>
 </body>
