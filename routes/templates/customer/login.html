@@ -3,17 +3,31 @@
 {% block title %}Login{% endblock %}
 <!-- -->
 {% block content %}
-<form method="POST">
-  <div class="row mb-3">
-    <div class="col-sm-3">
-      <label for="pin" class="col-form-label">PIN</label>
-    </div>
-    <div class="col">
-      <input type="number" name="pin" class="form-control" id="pin" />
-    </div>
+<body
+  style="
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  "
+>
+  <div style="max-width: 300px; text-align: center">
+    <img src="static/logo.png" height="35px" alt="Cactusnotes logo" />
+    <h1>cactusnotes</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{category}}" role="alert">{{message}}</div>
+    {% endfor %} {% endif %} {% endwith %}
+    <form method="POST">
+      <input
+        type="text"
+        name="pin"
+        class="form-control mb-2"
+        id="pin"
+        placeholder="Enter PIN..."
+      />
+      <input type="submit" class="btn btn-success" value="Access notes" />
+    </form>
   </div>
-  <div class="row mb-3">
-    <input type="submit" class="btn btn-primary" value="Login" />
-  </div>
-</form>
+</body>
 {% endblock %}

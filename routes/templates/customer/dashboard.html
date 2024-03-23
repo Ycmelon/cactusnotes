@@ -3,57 +3,69 @@
 {% block title %}Dashboard{% endblock %}
 <!-- -->
 {% block content %}
-<div class="row align-items-center">
-  <div class="col">
-    <h1>Welcome, {{ username }}!</h1>
+<body class="my-5">
+  <div class="container" style="max-width: 600px">
+    <h1>
+      <img src="static/logo.png" height="35px" alt="Cactusnotes logo" />
+      cactusnotes
+    </h1>
+
+    <hr />
+
+    <div class="row align-items-center">
+      <div class="col">
+        <p class="m-0">Welcome, {{ username }}!</p>
+      </div>
+      <div class="col-auto">
+        <form action="/logout" method="POST">
+          <input type="submit" value="Log out" class="btn btn-sm btn-primary" />
+        </form>
+      </div>
+    </div>
+
+    <br />
+    <h5>Your notes</h5>
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <!-- <th>Updated</th> -->
+        <!-- <th>Revision</th> -->
+        <th>Actions</th>
+      </tr>
+      {% for doc, chapters in documents.items() %}
+      <tr>
+        <td>
+          {{ doc | get_filename_from_shortname }} {% if chapters|length != 0
+          %}(chapters {{ chapters | rangelist_to_str }}){% endif %}
+        </td>
+
+        <td>
+          <a href="./download/{{ doc }}">Download</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <br />
+    <h5>Your study guides</h5>
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <!-- <th>Updated</th> -->
+        <!-- <th>Revision</th> -->
+        <th>Actions</th>
+      </tr>
+      {% for doc in documents.keys() %}
+      <tr>
+        <td>Guide for {{ doc }}</td>
+
+        <td>
+          <a href="./download/studyguide/{{ doc }}">Download</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
   </div>
-  <div class="col-auto">
-    <form action="/logout" method="POST">
-      <input type="submit" value="Log out" class="btn btn-primary" />
-    </form>
-  </div>
-</div>
+</body>
 
-<br />
-<h5>Your notes</h5>
-<table class="table">
-  <tr>
-    <th>Name</th>
-    <!-- <th>Updated</th> -->
-    <!-- <th>Revision</th> -->
-    <th>Actions</th>
-  </tr>
-  {% for doc, chapters in documents.items() %}
-  <tr>
-    <td>
-      {{ doc | get_filename_from_shortname }} {% if chapters|length != 0
-      %}(chapters {{ chapters | rangelist_to_str }}){% endif %}
-    </td>
-
-    <td>
-      <a href="./download/{{ doc }}">Download</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
-
-<br />
-<h5>Your study guides</h5>
-<table class="table">
-  <tr>
-    <th>Name</th>
-    <!-- <th>Updated</th> -->
-    <!-- <th>Revision</th> -->
-    <th>Actions</th>
-  </tr>
-  {% for doc in documents.keys() %}
-  <tr>
-    <td>Guide for {{ doc }}</td>
-
-    <td>
-      <a href="./download/studyguide/{{ doc }}">Download</a>
-    </td>
-  </tr>
-  {% endfor %}
-</table>
 {% endblock %}
