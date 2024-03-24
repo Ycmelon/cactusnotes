@@ -3,7 +3,7 @@
 {% block title %}Home{% endblock %}
 <!--  -->
 {% block content %}
-<div class="row align-items-center">
+<div class="row align-items-center mb-1">
   <div class="col">
     <h1>Dashboard</h1>
   </div>
@@ -14,63 +14,65 @@
   </div>
 </div>
 
-<br />
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col"></th>
-      <th scope="col">Total</th>
-      <th scope="col">Marcus</th>
-      <th scope="col">Ethan</th>
-      <th scope="col">Yu Chen</th>
-      <th scope="col">Jason</th>
-      <th scope="col">Junxiang</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">Paid (new portal)</th>
-      <td>{{ paid["total"] | format_money }}</td>
-      <td>{{ paid["marcus"] | format_money }}</td>
-      <td>{{ paid["ethan"] | format_money }}</td>
-      <td>{{ paid["yc"] | format_money }}</td>
-      <td>{{ paid["jason"] | format_money }}</td>
-      <td>{{ paid["jx"] | format_money }}</td>
-    </tr>
-    <tr>
-      <th scope="row">Due payout</th>
-      <td>{{ due["total"] | format_money }}</td>
-      <td>{{ due["marcus"] | format_money }}</td>
-      <td>{{ due["ethan"] | format_money }}</td>
-      <td>{{ due["yc"] | format_money }}</td>
-      <td>{{ due["jason"] | format_money }}</td>
-      <td>{{ due["jx"] | format_money }}</td>
-    </tr>
-    <tr>
-      <th scope="row">Total</th>
-      <td>{{ total["total"] | format_money }}</td>
-      <td>{{ total["marcus"] | format_money }}</td>
-      <td>{{ total["ethan"] | format_money }}</td>
-      <td>{{ total["yc"] | format_money }}</td>
-      <td>{{ total["jason"] | format_money }}</td>
-      <td>{{ total["jx"] | format_money }}</td>
-    </tr>
-  </tbody>
-</table>
+<div style="overflow-x: auto">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">Total</th>
+        <th scope="col">Marcus</th>
+        <th scope="col">Ethan</th>
+        <th scope="col">Yu Chen</th>
+        <th scope="col">Jason</th>
+        <th scope="col">Junxiang</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Paid (new portal)</th>
+        <td>{{ paid["total"] | format_money }}</td>
+        <td>{{ paid["marcus"] | format_money }}</td>
+        <td>{{ paid["ethan"] | format_money }}</td>
+        <td>{{ paid["yc"] | format_money }}</td>
+        <td>{{ paid["jason"] | format_money }}</td>
+        <td>{{ paid["jx"] | format_money }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Due payout</th>
+        <td>{{ due["total"] | format_money }}</td>
+        <td>{{ due["marcus"] | format_money }}</td>
+        <td>{{ due["ethan"] | format_money }}</td>
+        <td>{{ due["yc"] | format_money }}</td>
+        <td>{{ due["jason"] | format_money }}</td>
+        <td>{{ due["jx"] | format_money }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Total</th>
+        <td>{{ total["total"] | format_money }}</td>
+        <td>{{ total["marcus"] | format_money }}</td>
+        <td>{{ total["ethan"] | format_money }}</td>
+        <td>{{ total["yc"] | format_money }}</td>
+        <td>{{ total["jason"] | format_money }}</td>
+        <td>{{ total["jx"] | format_money }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <div class="row justify-content-between">
-  <div class="col-auto">
+  <div class="col-auto mb-1">
     <a href="/extension/get_customer" class="btn btn-outline-primary"
       >Sales portal</a
     >
   </div>
 
-  <div class="col-auto row gx-2">
-    <div class="col-auto">
+  <div class="col-auto row">
+    <div class="col-auto mb-1">
       <a href="./create_transaction" class="btn btn-outline-primary"
         >Create transaction</a
       >
     </div>
-    <div class="col-auto">
+    <div class="col-auto mb-1">
       <form
         action="./payout"
         method="POST"
@@ -84,5 +86,50 @@
       </form>
     </div>
   </div>
+</div>
+
+<br />
+<div class="row align-items-center mb-1">
+  <div class="col">
+    <h2>Recent transactions</h2>
+  </div>
+  <div class="col-auto">
+    <a href="./transactions" class="btn btn-primary">View all</a>
+  </div>
+</div>
+
+<div style="overflow-x: auto">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Admin</th>
+        <th>Customer</th>
+        <th>Items</th>
+        <th>Amount</th>
+        <th>Payout</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in recent_transactions %}
+      <tr>
+        <td>{{ i["timestamp"] | get_datetime_str_from_timestamp }}</td>
+        <td>{{ i["admin"] }}</td>
+        <td>
+          <a
+            href="{{ url_for('extension.get_customer', username=i['customer']) }}"
+            >{{ i["customer"] }}</a
+          >
+        </td>
+        <td>{{ i["documents"] | documents_to_items_str }}</td>
+        <td>{{ i["amount"] | format_money }}</td>
+        <td>
+          {% if i["paid_out"] %}{{ i["paid_out_timestamp"] |
+          get_datetime_str_from_timestamp }}{% else %}Not yet{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}

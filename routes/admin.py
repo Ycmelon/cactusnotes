@@ -113,9 +113,24 @@ def dashboard():
             for admin in admins:
                 due[admin] += tsc["amount"] * tsc["split"][admin]
 
+    recent_transactions = list(db.transactions.find().sort({"timestamp": -1}).limit(15))
+
     return render_template(
-        "admin/index.html", admins=admins, paid=paid, due=due, total=total
+        "admin/index.html",
+        admins=admins,
+        paid=paid,
+        due=due,
+        total=total,
+        recent_transactions=recent_transactions,
     )
+
+
+@admin_blueprint.route("/transactions")
+@requires_admin
+def all_transactions():
+    transactions = list(db.transactions.find().sort({"timestamp": -1}))
+
+    return render_template("admin/transactions.html", transactions=transactions)
 
 
 @admin_blueprint.post("/payout")
