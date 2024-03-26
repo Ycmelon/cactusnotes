@@ -16,3 +16,9 @@
 6. Setup rclone on local machine and find config at `~/.config/rclone/rclone.conf`
 7. Copy over config to similar path in the VPS
 8. Change DNS records to ipv4 address (not "private IP")
+
+## Updating notes procedure
+
+1. Update the file in Google Drive (make sure its the same file name, or else change the filename in the database)
+2. In database, update chapter pages if necessary, and chapter notes if necessary
+3. Restart server (`sudo systemctl restart cactusnotes`) so that files are updated and document info is refreshed
