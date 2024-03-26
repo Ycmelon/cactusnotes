@@ -15,6 +15,7 @@ from flask import (
 from db import db
 from pdf import pdf_from_pages
 from utils import (
+    get_current_timestamp,
     get_document_info_from_shortname,
     rangelist_to_str,
     get_documents_from_transactions,
@@ -61,6 +62,16 @@ def customer_login(code: str):
         return redirect(url_for(".access_customer", code=code))
 
     # otherwise
+    db.analytics.insert_one(
+        {
+            "customer": customer["username"],
+            "type": "login",
+            "timestamp": get_current_timestamp(),
+            "user_agent": request.headers.get("User-Agent"),
+            "ip_address": request.remote_addr,
+        }
+    )
+
     session["customer"] = customer["username"]  # set logged in
     return redirect(url_for(".access_customer", code=code))
 
@@ -80,6 +91,17 @@ def download_studyguide(shortname: str):
 
     filename = get_document_info_from_shortname(shortname)["studyguide"]
 
+    db.analytics.insert_one(
+        {
+            "customer": session["customer"],
+            "type": "download",
+            "document": f"{shortname} studyguide",
+            "timestamp": get_current_timestamp(),
+            "user_agent": request.headers.get("User-Agent"),
+            "ip_address": request.remote_addr,
+        }
+    )
+
     return send_from_directory("./drive", filename, as_attachment=True)
 
 
@@ -97,6 +119,18 @@ def download_document(shortname: str):
         abort(403)
 
     filename = get_document_info_from_shortname(shortname)["filename"]
+
+    db.analytics.insert_one(
+        {
+            "customer": session["customer"],
+            "type": "download",
+            "document": shortname,
+            "timestamp": get_current_timestamp(),
+            "user_agent": request.headers.get("User-Agent"),
+            "ip_address": request.remote_addr,
+        }
+    )
+
     if len(documents[shortname]) == 0:  # full file
         return send_from_directory("./drive", filename, as_attachment=True)
 
@@ -119,7 +153,7 @@ def download_document(shortname: str):
 @customer_blueprint.post("/logout")
 def customer_logout():
     session.pop("customer")
-    return "Logged out"
+    return "Logged out"  # TODO
 
 
 @customer_blueprint.errorhandler(404)
