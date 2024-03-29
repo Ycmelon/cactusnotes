@@ -87,9 +87,10 @@ window.addEventListener("load", () => {
   window.addEventListener(
     "message",
     (event) => {
-      if (event.origin == "https://www.carousell.sg") return;
+      // console.log("ORIGIN", event.origin);
+      // if (event.origin == "https://www.carousell.sg") return;
 
-      pasteInChat(event.data);
+      if (event.origin == "{{ domain }}") pasteInChat(event.data);
     },
     false
   );
