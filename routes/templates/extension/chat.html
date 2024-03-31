@@ -153,37 +153,71 @@
                 data-bs-placement="top"
                 title="Pasted!"
                 data-bs-trigger="manual"
-                >copy to chat</a
+                >paste copypasta in chat</a
               >) {% else %}(<a
                 id="copy-paste-button"
                 class="link-primary"
                 href="#"
-                onclick="copyLink()"
+                onclick="copyCopypasta()"
                 data-bs-toggle="tooltip"
                 data-bs-placement="top"
                 title="Copied!"
                 data-bs-trigger="manual"
-                >copy to clipboard</a
+                >copy copypasta</a
               >) {% endif %}</label
             >
-            <input
+            <div class="input-group">
+              <span class="input-group-text">{{ domain }}/</span>
+              <input
               type="text"
               name="link"
-              readonly
               class="form-control"
               id="form-link"
-              value="cactusnotes.co/{{ link }}"
+              value="{{ link }}"
             />
+            <span
+              id="copy-link-button"
+              class="input-group-text"
+              style="cursor: pointer;"
+              onclick="copyLink()"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              title="Copied!"
+              data-bs-trigger="manual"
+            ><i class="bi bi-copy"></i></span>
           </div>
+            </div>
+            
           <div class="mb-2">
             <label for="form-pin" class="form-label">PIN</label>
+            <div class="input-group">
+              <input
+                type="text"
+                name="pin"
+                class="form-control"
+                id="form-pin"
+                value="{{ pin }}"
+              />
+              <span
+                id="copy-pin-button"
+                class="input-group-text"
+                style="cursor: pointer;"
+                onclick="copyPIN()"
+                data-bs-toggle="tooltip"
+                data-bs-placement="top"
+                title="Copied!"
+                data-bs-trigger="manual"
+              ><i class="bi bi-copy"></i></span>
+            </div>
+          </div>
+          <div class="mb-2">
+            <label for="form-pin" class="form-label">Email</label>
             <input
               type="text"
-              name="pin"
-              readonly
+              name="email"
               class="form-control"
-              id="form-pin"
-              value="{{ pin }}"
+              id="form-email"
+              value="{{ email }}"
             />
           </div>
           <label for="form-documents" class="form-label">Documents</label>
@@ -405,7 +439,7 @@
         setTimeout(() => { copyPasteButton.hide() }, 1000);
 
         paste(`Kindly find your notes at the link below:
-Link: ${document.querySelector("#form-link").value}
+Link: {{ domain }}/${document.querySelector("#form-link").value}
 PIN: ${document.querySelector("#form-pin").value}`);
       }
   
@@ -413,13 +447,29 @@ PIN: ${document.querySelector("#form-pin").value}`);
         navigator.clipboard.writeText(text).then(() => {});
       }
   
-      function copyLink() {
+      function copyCopypasta() {
         copyPasteButton.show();
         setTimeout(() => { copyPasteButton.hide() }, 1000);
 
         copy(`Kindly find your notes at the link below:
-Link: ${document.querySelector("#form-link").value}
+Link: {{ domain }}/${document.querySelector("#form-link").value}
 PIN: ${document.querySelector("#form-pin").value}`);
+      }
+
+      function copyLink() {
+        copy("{{ domain }}/" + document.querySelector("#form-link").value);
+
+        const tooltip = new bootstrap.Tooltip(document.querySelector("#copy-link-button"));
+        tooltip.show();
+        setTimeout(() => { tooltip.hide() }, 1000);
+      }
+
+      function copyPIN() {
+        copy(document.querySelector("#form-pin").value);
+
+        const tooltip = new bootstrap.Tooltip(document.querySelector("#copy-pin-button"));
+        tooltip.show();
+        setTimeout(() => { tooltip.hide() }, 1000);
       }
     </script>
 

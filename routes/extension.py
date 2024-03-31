@@ -1,3 +1,4 @@
+import os
 from functools import wraps
 from flask import (
     Blueprint,
@@ -23,6 +24,11 @@ from utils import (
 from typing import Union
 
 extension_blueprint = Blueprint("extension", __name__, url_prefix="/extension")
+
+
+DOMAIN = (
+    "cactusnotes.co" if os.environ.get("MODE") == "production" else "localhost:5000"
+)
 
 
 def requires_admin(f):
@@ -63,6 +69,7 @@ def get_customer():
 
     return render_template(
         "extension/chat.html",
+        domain=DOMAIN,
         **customer,
         all_documents=get_all_documents(),
         extension_mode=True if request.args.get("extension_mode") else False
@@ -78,15 +85,6 @@ def update():
         username=username,
         extension_mode=request.args.get("extension_mode"),
     )
-
-    if "amount" not in request.form or request.form["amount"] == "":
-        flash("Missing amount")
-        return redirect(curr_url)
-    try:
-        float(request.form["amount"])
-    except ValueError:
-        flash("Invalid amount")
-        return redirect(curr_url)
 
     # get submitted documents
     documents = {}
@@ -136,18 +134,33 @@ def update():
         "jx": 0.6 if request.form["admin"] == "jx" else 0.1,
     }
 
+    info = {
+        "username": username,
+        "link": request.form["link"].strip(),
+        "pin": request.form["pin"].strip(),
+        "remarks": "",
+    }
+
+    if "email" in request.form and request.form["email"]:
+        info["email"] = request.form["email"]
+
     db.customers.update_one(  # insert customer if first time
         {"username": username},
-        {
-            "$set": {
-                "username": username,
-                "link": request.form["link"].split("/")[-1],
-                "pin": request.form["pin"],
-                "remarks": "",
-            }
-        },
+        {"$set": info},
         upsert=True,
     )
+
+    # only check amount here, so customer info i.e. email can be updated even
+    # without transaction
+    if "amount" not in request.form or request.form["amount"] == "":
+        flash("No transaction was created as amount was not specified")
+        return redirect(curr_url)
+
+    try:
+        float(request.form["amount"])
+    except ValueError:
+        flash("Invalid amount")
+        return redirect(curr_url)
 
     db.transactions.insert_one(
         {
