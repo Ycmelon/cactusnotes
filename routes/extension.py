@@ -1,5 +1,6 @@
 import os
 from functools import wraps
+from bson import ObjectId
 from flask import (
     Blueprint,
     flash,
@@ -17,6 +18,7 @@ from utils import (
     generate_pin,
     get_all_documents,
     get_current_timestamp,
+    get_timestamp_from_datetimelocal,
     rangestr_to_list,
     get_documents_from_transactions,
 )
@@ -48,6 +50,13 @@ def requires_admin(f):
 def get_customer():
     username = request.args.get("username", "").strip()
 
+    # for action URLs to redirect back
+    session["curr_url"] = url_for(
+        ".get_customer",
+        username=username,
+        extension_mode=request.args.get("extension_mode"),
+    )
+
     # get customer information
     customer: Union[dict, None] = db.customers.find_one(
         {"username": username}, {"_id": 0}
@@ -62,9 +71,10 @@ def get_customer():
         }
 
     # then, get customers' transactions
-    customer["transactions"] = list(
-        db.transactions.find({"customer": username}, {"_id": 0})
-    )
+    customer["transactions"] = [
+        {**i, "_id": str(i["_id"])}  # convert objectids to str
+        for i in db.transactions.find({"customer": username})
+    ]
     customer["documents"] = get_documents_from_transactions(customer["transactions"])
 
     return render_template(
@@ -80,17 +90,14 @@ def get_customer():
 @requires_admin
 def update():
     username = request.args["username"].strip()
-    curr_url = url_for(
-        ".get_customer",
-        username=username,
-        extension_mode=request.args.get("extension_mode"),
-    )
 
     # get submitted documents
     documents = {}
 
     for key, _ in request.form.items():
         if key.startswith("doc-"):
+            # seems to only be "on" if checked otherwise it doesnt appear
+            # as a key in the dict; thats why this works
             documents[key.replace("doc-", "", 1)] = []
 
     for key, value in request.form.items():
@@ -104,7 +111,7 @@ def update():
                 documents[doc] = rangestr_to_list(value)
             except:
                 flash("Invalid range of chapters somewhere")
-                return redirect(curr_url)
+                return redirect(session["curr_url"])
 
     # get previous documents
     transactions = list(db.transactions.find({"customer": username}, {"_id": 0}))
@@ -154,13 +161,13 @@ def update():
     # without transaction
     if "amount" not in request.form or request.form["amount"] == "":
         flash("No transaction was created as amount was not specified")
-        return redirect(curr_url)
+        return redirect(session["curr_url"])
 
     try:
         float(request.form["amount"])
     except ValueError:
         flash("Invalid amount")
-        return redirect(curr_url)
+        return redirect(session["curr_url"])
 
     db.transactions.insert_one(
         {
@@ -176,4 +183,64 @@ def update():
 
     flash("Updated")
 
-    return redirect(curr_url)
+    return redirect(session["curr_url"])
+
+
+@extension_blueprint.post("/update_transaction")
+@requires_admin
+def update_transaction():
+    # get submitted documents
+    documents = {}
+
+    for key, _ in request.form.items():
+        if key.startswith("doc-"):
+            documents[key.replace("doc-", "", 1)] = []
+
+    for key, value in request.form.items():
+        if key.startswith("chapters-"):
+            doc = key.replace("chapters-", "", 1)
+
+            if not doc in documents:
+                continue
+
+            try:
+                documents[doc] = rangestr_to_list(value)
+            except:
+                flash("Not updated: invalid range of chapters somewhere")
+                return redirect(session["curr_url"])
+
+    try:
+        float(request.form["amount"])
+    except ValueError:
+        flash("Not updated: invalid amount")
+        return redirect(session["curr_url"])
+
+    db.transactions.update_one(
+        {
+            "_id": ObjectId(request.form["_id"]),
+        },
+        {
+            "$set": {
+                "timestamp": get_timestamp_from_datetimelocal(
+                    request.form["timestamp"]
+                ),
+                "amount": float(request.form["amount"]),
+                "admin": request.form["admin"],
+                "documents": documents,
+                # "paid_out": "paid_out" in request.form,
+            }
+        },
+    )
+
+    # print(request.form)
+    flash("Transaction updated")
+    return redirect(session["curr_url"])
+
+
+@extension_blueprint.post("/delete_transaction")
+@requires_admin
+def delete_transaction():
+    db.transactions.delete_one({"_id": ObjectId(request.form["_id"])})
+
+    flash("Transaction successfully deleted")
+    return redirect(session["curr_url"])

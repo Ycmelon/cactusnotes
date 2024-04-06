@@ -15,6 +15,7 @@ from utils import (
     documents_to_items_str,
     format_money,
     get_datetime_str_from_timestamp,
+    get_datetimelocal_from_timestamp,
     get_filename_from_shortname,
     rangelist_to_str,
 )
@@ -38,6 +39,9 @@ app.jinja_env.filters["get_datetime_str_from_timestamp"] = (
 )
 app.jinja_env.filters["get_filename_from_shortname"] = get_filename_from_shortname
 app.jinja_env.filters["format_money"] = format_money
+app.jinja_env.filters["get_datetimelocal_from_timestamp"] = (
+    get_datetimelocal_from_timestamp
+)
 
 
 app.register_blueprint(admin_blueprint)

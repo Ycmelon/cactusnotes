@@ -1,0 +1,183 @@
+<div class="modal fade" id="transaction-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <form
+      action="./update_transaction?username={{ username | urlencode }}"
+      method="POST"
+    >
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit transaction</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="tsc-id" name="_id" />
+          <div class="mb-2">
+            <label for="tsc-timestamp" class="form-label">Date and time</label>
+            <input
+              class="form-control"
+              type="datetime-local"
+              id="tsc-timestamp"
+              name="timestamp"
+            />
+          </div>
+          <div class="mb-2">
+            <label for="tsc-admin" class="form-label">Admin</label>
+            <select class="form-select" id="tsc-admin" name="admin">
+              <option value="marcus">Marcus</option>
+              <option value="ethan">Ethan</option>
+              <option value="yc">Yu Chen</option>
+              <option value="jason">Jason</option>
+              <option value="jx">Junxiang</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label for="tsc-documents" class="form-label">Documents</label>
+            <div class="form-control mb-2" id="tsc-documents">
+              {% for doc in all_documents %}
+              <div class="form-check">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  id="tsc-doc-{{
+                doc['shortname'] }}"
+                  name="doc-{{ doc['shortname'] }}"
+                />
+                <label
+                  class="form-check-label"
+                  for="tsc-doc-{{ doc['shortname'] }}"
+                >
+                  {{ doc["filename"] }}
+                </label>
+                <!-- <i
+                  class="bi bi-info-circle"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modal"
+                  data-bs-desc="{{ doc['chapter_desc'] }}"
+                  style="cursor: pointer"
+                ></i> -->
+                <input
+                  type="text"
+                  name="chapters-{{ doc['shortname'] }}"
+                  style="
+                    width: 5em;
+                    border: none;
+                    padding: 0;
+                    padding-left: 0.25em;
+                    color: grey;
+                  "
+                />
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="mb-2">
+            <label for="tsc-amount" class="form-label">Amount</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input
+                type="text"
+                class="form-control"
+                name="amount"
+                id="tsc-amount"
+              />
+            </div>
+          </div>
+
+          <!-- <div class="mb-2">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                value=""
+                id="tsc-paid-out"
+                name="paid_out"
+              />
+              <label class="form-check-label" for="tsc-paid-out">
+                Paid out
+              </label>
+            </div>
+          </div> -->
+        </div>
+        <div
+          class="modal-footer"
+          style="display: flex; justify-content: space-between"
+        >
+          <label class="btn btn-outline-danger" for="tsc-delete"
+            >Delete transaction</label
+          >
+          <div>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <input type="submit" class="btn btn-primary" value="Save changes" />
+          </div>
+        </div>
+      </div>
+    </form>
+    <form action="./delete_transaction" method="POST" style="display: none">
+      <input type="hidden" id="tsc-delete-id" name="_id" />
+      <input type="submit" id="tsc-delete" />
+    </form>
+  </div>
+</div>
+
+<script>
+  const transactionModal = document.getElementById("transaction-modal");
+  transactionModal.addEventListener("show.bs.modal", function (event) {
+    const tscRow = event.relatedTarget;
+
+    transactionModal.querySelector("#tsc-id").value =
+      tscRow.getAttribute("data-id");
+
+    transactionModal.querySelector("#tsc-delete-id").value =
+      tscRow.getAttribute("data-id");
+
+    transactionModal.querySelector("#tsc-timestamp").value =
+      tscRow.getAttribute("data-datetime-local");
+
+    transactionModal
+      .querySelector(
+        `#tsc-admin option[value=${tscRow.getAttribute("data-admin")}]`
+      )
+      .setAttribute("selected", "true");
+
+    transactionModal.querySelector("#tsc-amount").value =
+      tscRow.getAttribute("data-amount");
+
+    // transactionModal.querySelector("#tsc-paid-out").checked =
+    //   tscRow.getAttribute("data-paid-out") == "True";
+
+    // wow... sorry future me
+    const docs = tscRow.getAttribute("data-documents").split(",");
+    const parsed_docs = docs.slice(0, docs.length - 1).map((i) => i.split(":"));
+
+    // reset docs
+    transactionModal
+      .querySelectorAll("input[name^=doc-]")
+      .forEach((element) => {
+        element.checked = false; // element.removeAttribute("checked");
+      });
+    transactionModal
+      .querySelectorAll("input[name^=chapters-]")
+      .forEach((element) => {
+        element.value = "";
+      });
+
+    // then populate info
+    for (const [doc, chapters] of parsed_docs) {
+      transactionModal.querySelector(`input[name="doc-${doc}"]`).checked =
+        "true";
+      transactionModal.querySelector(`input[name="chapters-${doc}"]`).value =
+        chapters;
+    }
+  });
+</script>

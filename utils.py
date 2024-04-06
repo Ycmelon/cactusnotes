@@ -137,5 +137,17 @@ def get_document_info_from_shortname(shortname: str) -> dict:
     raise KeyError
 
 
-def format_money(value: float) -> str:
-    return f"${value:,.2f}".replace("$-", "-$")
+def format_money(value: float, dollarsign=True) -> str:
+    return f"${value:,.2f}".replace("$-", "-$") if dollarsign else f"{value:,.2f}"
+
+
+def get_datetimelocal_from_timestamp(timestamp: int) -> str:
+    # <input type="datetime-local">
+    return datetime.fromtimestamp(timestamp, timezone(timedelta(hours=8))).strftime(
+        "%Y-%m-%dT%H:%M"
+    )
+
+
+def get_timestamp_from_datetimelocal(datetimelocal: str) -> int:
+    # TODO honestly not sure if this rly works need to check
+    return int(datetime.strptime(datetimelocal, "%Y-%m-%dT%H:%M").timestamp())
