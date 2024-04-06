@@ -113,7 +113,7 @@ def dashboard():
             for admin in admins:
                 due[admin] += tsc["amount"] * tsc["split"][admin]
 
-    recent_transactions = list(db.transactions.find().sort({"timestamp": -1}).limit(15))
+    recent_transactions = list(db.transactions.find().sort({"timestamp": -1}).limit(5))
 
     return render_template(
         "admin/index.html",
