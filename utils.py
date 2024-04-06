@@ -151,3 +151,12 @@ def get_datetimelocal_from_timestamp(timestamp: int) -> str:
 def get_timestamp_from_datetimelocal(datetimelocal: str) -> int:
     # TODO honestly not sure if this rly works need to check
     return int(datetime.strptime(datetimelocal, "%Y-%m-%dT%H:%M").timestamp())
+
+def get_timestamp_from_datetimelocal(datetimelocal: str) -> int:
+    # TODO honestly not sure if this rly works need to check
+    return int(
+        datetime.strptime(datetimelocal, "%Y-%m-%dT%H:%M")
+        .replace(tzinfo=timezone(timedelta(hours=8)))
+        .timestamp()
+    )
+
