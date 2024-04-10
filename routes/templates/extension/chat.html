@@ -265,6 +265,9 @@
                   <th scope="col">Amount</th>
                 </tr>
               </thead>
+              {% if transactions|length != 0 %}
+              <!--  -->
+              {# for some reason an empty tbody will remove the table outline #}
               <tbody>
                 {% for tsc in transactions %}
                 <tr
@@ -287,6 +290,7 @@
                 </tr>
                 {% endfor %}
               </tbody>
+              {% endif %}
               <tfoot>
                 <tr>
                   <td>
