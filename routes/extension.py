@@ -9,7 +9,9 @@ from flask import (
     session,
     render_template,
     url_for,
+    json,
 )
+from pymongo import DESCENDING
 
 # from routes.admin import authenticate
 from db import db
@@ -77,10 +79,27 @@ def get_customer():
     ]
     customer["documents"] = get_documents_from_transactions(customer["transactions"])
 
+    # THEN, get customer analytics
+    analytics = list(db.analytics.find({"customer": username}).sort("timestamp", DESCENDING))
+    download_data = {}
+    heatmap_data = {}
+    for i in analytics:
+        if i["type"] != "download":
+            continue
+
+        if i["document"] not in download_data:
+            download_data[i["document"]] = 0
+
+        download_data[i["document"]] += 1
+        heatmap_data[i["timestamp"]] = 1
+
     return render_template(
         "extension/chat.html",
         domain=DOMAIN,
         **customer,
+        analytics=analytics,
+        download_data=download_data,
+        heatmap_data=json.dumps(heatmap_data),
         all_documents=get_all_documents(),
         extension_mode=True if request.args.get("extension_mode") else False
     )

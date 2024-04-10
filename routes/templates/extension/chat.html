@@ -36,16 +36,16 @@
         >
           Copypasta
         </button>
-        <!-- <button
+        <button
           class="nav-link"
-          id="nav-settings-tab"
+          id="nav-analytics-tab"
           data-bs-toggle="tab"
-          data-bs-target="#nav-settings"
+          data-bs-target="#nav-analytics"
           type="button"
           role="tab"
         >
-          Settings
-        </button> -->
+          Analytics
+        </button>
       </div>
     </nav>
 
@@ -395,8 +395,9 @@
           </div>
         </div>
       </div>
-      <div class="tab-pane fade" id="nav-settings" role="tabpanel">
-        <div class="form-check form-switch">
+      <div class="tab-pane fade" id="nav-analytics" role="tabpanel">
+        {% include "extension/analytics_tab.html" %}
+        <!-- <div class="form-check form-switch">
           <input
             class="form-check-input"
             type="checkbox"
@@ -405,7 +406,7 @@
           <label class="form-check-label" for="condensed-switch"
             >Condensed chat view</label
           >
-        </div>
+        </div> -->
       </div>
     </div>
 

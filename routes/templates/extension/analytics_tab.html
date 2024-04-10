@@ -1,0 +1,94 @@
+{% if analytics|length == 0 %} No analytics yet! {% else %}
+<script type="text/javascript" src="//d3js.org/d3.v3.min.js"></script>
+<script
+  type="text/javascript"
+  src="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.min.js"
+></script>
+<link
+  rel="stylesheet"
+  href="//cdn.jsdelivr.net/cal-heatmap/3.3.10/cal-heatmap.css"
+/>
+
+<div class="d-flex flex-column align-items-center my-4">
+  <div>
+    <div id="cal-heatmap"></div>
+  </div>
+  <div>
+    <div class="btn-group" role="group">
+      <button id="cal-heatmap-previous" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button id="cal-heatmap-next" class="btn btn-outline-primary btn-sm">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  const cal = new CalHeatMap();
+  const data = JSON.parse(`{{ heatmap_data | safe }}`);
+  cal.init({
+    itemSelector: "#cal-heatmap",
+    data: data,
+    start: new Date(Object.keys(data)[0] * 1000),
+    dataType: "json",
+    domain: "month",
+    subDomain: "x_day",
+    cellSize: 20,
+    cellPadding: 2,
+    domainGutter: 10,
+    range: 2,
+    tooltip: true,
+    domainDynamicDimension: false,
+    subDomainTextFormat: "%d",
+    legend: [20, 40, 60, 80],
+    previousSelector: "#cal-heatmap-previous",
+    nextSelector: "#cal-heatmap-next",
+    itemName: ["access", "accesses"],
+  });
+</script>
+
+<p class="mb-2">Downloads</p>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Document</th>
+      <th>Downloads</th>
+      <!-- <th></th> -->
+    </tr>
+  </thead>
+  <tbody>
+    {% for document, count in download_data.items() %}
+    <tr>
+      <td>{{ document }}</td>
+      <td>{{ count }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<details>
+  <summary class="mb-2">Detailed information</summary>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Timestamp</th>
+        <th>User agent & IP</th>
+        <!-- <th></th> -->
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in analytics %}
+      <tr>
+        <td>
+          {{ i["type"] }}{% if i["document"] %} ({{ i["document"] }}){% endif %}
+        </td>
+        <td>{{ i["timestamp"] | get_datetime_str_from_timestamp }}</td>
+        <td>{{ i["user_agent" ] }} / {{ i["ip_address"] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</details>
+{% endif %}
