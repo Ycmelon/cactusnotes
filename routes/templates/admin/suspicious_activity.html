@@ -1,0 +1,32 @@
+{% extends "admin/template.html" %}
+<!--  -->
+{% block title %}Home{% endblock %}
+<!--  -->
+{% block content %}
+<h1>All suspicious activity (>10 accesses)</h1>
+
+<div style="overflow-x: auto">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Latest action</th>
+        <th>Action count</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i in suspicious_activity %}
+      <tr>
+        <td>
+          <a href="{{ url_for('extension.get_customer', username=i['_id']) }}"
+            >{{ i["_id"] }}</a
+          >
+        </td>
+        <td>{{ i["latest_timestamp"] | get_datetime_str_from_timestamp }}</td>
+        <td>{{ i["action_count"] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

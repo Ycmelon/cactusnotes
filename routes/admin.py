@@ -115,6 +115,23 @@ def dashboard():
 
     recent_transactions = list(db.transactions.find().sort({"timestamp": -1}).limit(5))
 
+    recent_suspicious_activity = list(
+        db.analytics.aggregate(
+            [
+                {
+                    "$group": {
+                        "_id": "$customer",
+                        "latest_timestamp": {"$max": "$timestamp"},
+                        "action_count": {"$count": {}},
+                    }
+                },
+                {"$match": {"action_count": {"$gte": 10}}},
+                {"$sort": {"latest_timestamp": -1}},
+                {"$limit": 5},
+            ]
+        )
+    )
+
     return render_template(
         "admin/index.html",
         admins=admins,
@@ -122,6 +139,7 @@ def dashboard():
         due=due,
         total=total,
         recent_transactions=recent_transactions,
+        recent_suspicious_activity=recent_suspicious_activity,
     )
 
 
@@ -131,6 +149,30 @@ def all_transactions():
     transactions = list(db.transactions.find().sort({"timestamp": -1}))
 
     return render_template("admin/transactions.html", transactions=transactions)
+
+
+@admin_blueprint.route("/suspicious_activity")
+@requires_admin
+def all_suspicious_activity():
+    suspicious_activity = list(
+        db.analytics.aggregate(
+            [
+                {
+                    "$group": {
+                        "_id": "$customer",
+                        "latest_timestamp": {"$max": "$timestamp"},
+                        "action_count": {"$count": {}},
+                    }
+                },
+                {"$match": {"action_count": {"$gte": 10}}},
+                {"$sort": {"latest_timestamp": -1}},
+            ]
+        )
+    )
+
+    return render_template(
+        "admin/suspicious_activity.html", suspicious_activity=suspicious_activity
+    )
 
 
 @admin_blueprint.post("/payout")
