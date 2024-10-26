@@ -26,7 +26,7 @@ from rclone import rclone_pull
 
 app = Flask(__name__)
 
-app.secret_key = secrets.token_hex()
+app.secret_key = os.environ["SECRET_KEY"]
 app.template_folder = "./routes/templates"
 
 # for chrome-based browsers
