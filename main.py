@@ -1,4 +1,5 @@
 import os
+import secrets
 from flask import Flask, redirect
 from flask_cors import CORS
 
@@ -25,7 +26,7 @@ from rclone import rclone_pull
 
 app = Flask(__name__)
 
-app.secret_key = b"\xb6\x96\xee\xbd\x0f\xa8t\xbf\xd5\x8a2\xda\x8dp\x11\x97xvVW\xa3\xdc\xed\xe0"  # temp
+app.secret_key = secrets.token_hex()
 app.template_folder = "./routes/templates"
 
 # for chrome-based browsers
