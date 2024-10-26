@@ -1,10 +1,13 @@
-# Cactusnotes Sales Portal
+# Cactusnotes sales portal
 
-## Development
+Website and extension for managing sales
 
-1. Create a venv
-2. Install dependencies from requirements.txt
-3. In the activate file, set "MODE" to "testing" and "DATABASE_PW". Remember to unset them under the deactivate function as well.
+## Development setup
+
+1. Create a venv; install dependencies from requirements.txt
+2. Set environment variables (e.g. in activate file)
+   - Set "MODE" to "testing"
+   - Set "DATABASE_PW"
 
 ## Production setup (for future self)
 

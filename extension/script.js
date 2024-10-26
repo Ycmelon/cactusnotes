@@ -44,11 +44,11 @@ function changeUser(username) {
 
 function startObserver() {
   // check for change in focused chat
-  const targetNode = document.querySelector("a[href^='/u/']");
+  const targetNode = document.querySelector("p[data-testid]");
   const callback = (mutationList, _) => {
     for (const mutation of mutationList) {
-      if (mutation.type === "attributes" && mutation.attributeName == "href") {
-        const newUser = mutation.target.href.split("/").at(-2);
+      if (mutation.type === "characterData") {
+        const newUser = mutation.target.data.trim();
         changeUser(newUser);
       }
     }
@@ -56,9 +56,10 @@ function startObserver() {
 
   const observer = new MutationObserver(callback);
   observer.observe(targetNode, {
-    attributes: true,
+    characterData: true,
+    attributes: false,
     childList: false,
-    subtree: false,
+    subtree: true,
   });
 }
 
@@ -67,15 +68,15 @@ window.addEventListener("load", () => {
 
   // wait for chat interface to load, then grab the username
   const observer = new MutationObserver(function (_, mutationInstance) {
-    const someDiv = document.querySelector("a[href^='/u/']");
+    const someDiv = document.querySelector("p[data-testid]");
     if (someDiv) {
-      const username = someDiv.href.split("/").at(-2);
+      mutationInstance.disconnect();
 
+      const username = someDiv.innerText.trim();
       addSidebar(); // only load interface after first user appears
       changeUser(username);
 
       startObserver();
-      mutationInstance.disconnect();
     }
   });
 
