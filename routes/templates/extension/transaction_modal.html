@@ -28,11 +28,9 @@
           <div class="mb-2">
             <label for="tsc-admin" class="form-label">Admin</label>
             <select class="form-select" id="tsc-admin" name="admin" disabled>
-              <option value="marcus">Marcus</option>
-              <option value="ethan">Ethan</option>
-              <option value="yc">Yu Chen</option>
-              <option value="jason">Jason</option>
-              <option value="jx">Junxiang</option>
+              {% for name, id in admins.items() %}
+              <option value="{{ id }}">{{ name }}</option>
+              {% endfor %}
             </select>
           </div>
           <div class="mb-2">

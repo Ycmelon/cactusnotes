@@ -40,19 +40,19 @@
     </div>
   </div>
   <h5>Split</h5>
-  {% for admin in ["ethan", "marcus", "yc", "jason", "jx"] %}
+  {% for name, id in admins.items() %}
   <div class="row mb-3">
     <div class="col-sm-3">
       <label for="split-{{admin}}" class="col-form-label"
-        >Fraction ({{ admin }})</label
+        >Fraction ({{ name }})</label
       >
     </div>
     <div class="col">
       <input
         type="text"
-        name="split-{{admin}}"
+        name="split-{{id}}"
         class="form-control"
-        id="split-{{admin}}"
+        id="split-{{id}}"
         placeholder="e.g. 0.1 or 0.6 or 1"
       />
     </div>

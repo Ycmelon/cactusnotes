@@ -7,18 +7,22 @@ from flask import (
     redirect,
     request,
 )
+import os
+from json import loads
 from functools import wraps
-from db import db
 from argon2 import PasswordHasher
-
 from urllib.parse import quote_plus
 
+
+from db import db
 from utils import get_current_timestamp, get_datetime_str_from_timestamp
 
 
 admin_blueprint = Blueprint("admin", __name__, url_prefix="/admin")
 
 ph = PasswordHasher()
+
+ADMINS = loads(os.environ["ADMINS"])  # {"Name": "id"}
 
 
 def authenticate(username: str, password: str) -> bool:
@@ -92,25 +96,23 @@ def logout():
 @admin_blueprint.route("/")
 @requires_admin
 def dashboard():
-    admins = ["marcus", "ethan", "yc", "jason", "jx"]
-
     transactions = db.transactions.find({}, {"amount": 1, "paid_out": 1, "split": 1})
-    paid = {"total": 0, **{admin: 0 for admin in admins}}
-    due = {"total": 0, **{admin: 0 for admin in admins}}
-    total = {"total": 0, **{admin: 0 for admin in admins}}
+    paid = {"total": 0, **{admin: 0 for admin in ADMINS.values()}}
+    due = {"total": 0, **{admin: 0 for admin in ADMINS.values()}}
+    total = {"total": 0, **{admin: 0 for admin in ADMINS.values()}}
 
     for tsc in transactions:
         total["total"] += tsc["amount"]
-        for admin in admins:
+        for admin in ADMINS.values():
             total[admin] += tsc["amount"] * tsc["split"][admin]
 
         if tsc["paid_out"]:
             paid["total"] += tsc["amount"]
-            for admin in admins:
+            for admin in ADMINS.values():
                 paid[admin] += tsc["amount"] * tsc["split"][admin]
         else:
             due["total"] += tsc["amount"]
-            for admin in admins:
+            for admin in ADMINS.values():
                 due[admin] += tsc["amount"] * tsc["split"][admin]
 
     recent_transactions = list(db.transactions.find().sort({"timestamp": -1}).limit(5))
@@ -134,7 +136,7 @@ def dashboard():
 
     return render_template(
         "admin/index.html",
-        admins=admins,
+        admins=ADMINS,
         paid=paid,
         due=due,
         total=total,
@@ -193,7 +195,7 @@ def payout():
 @admin_blueprint.get("/create_transaction")
 @requires_admin
 def create_transaction_form():
-    return render_template("admin/create_transaction.html")
+    return render_template("admin/create_transaction.html", admins=ADMINS)
 
 
 @admin_blueprint.post("/create_transaction")
@@ -207,13 +209,7 @@ def create_transaction():
 
     try:
         total_split = sum(
-            [
-                float(request.form["split-ethan"]),
-                float(request.form["split-marcus"]),
-                float(request.form["split-yc"]),
-                float(request.form["split-jason"]),
-                float(request.form["split-jx"]),
-            ]
+            float(request.form[f"split-{admin}"]) for admin in ADMINS.values()
         )
         assert abs(total_split - 1) < 0.001 or abs(total_split) < 0.001
     except:
@@ -232,11 +228,8 @@ def create_transaction():
             "documents": {},
             "admin": session["admin"],
             "split": {
-                "ethan": float(request.form["split-ethan"]),
-                "marcus": float(request.form["split-marcus"]),
-                "yc": float(request.form["split-yc"]),
-                "jason": float(request.form["split-jason"]),
-                "jx": float(request.form["split-jx"]),
+                admin: float(request.form[f"split-{admin}"])
+                for admin in ADMINS.values()
             },
         }
     )

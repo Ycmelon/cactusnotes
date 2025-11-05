@@ -295,13 +295,10 @@
                 <tr>
                   <td>
                     <select class="form-select" name="admin">
-                      <option value="marcus">Marcus</option>
-                      <option value="ethan">Ethan</option>
-                      <option value="yc">Yu Chen</option>
-                      <option value="jason">Jason</option>
-                      <option value="jx">Junxiang</option>
+                      {% for name, id in admins.items() %}
+                      <option value="{{ id }}">{{ name }}</option>
+                      {% endfor %}
                       <script>
-                        // LOL fuck best practices
                         document.querySelector(
                           "select[name=admin] option[value={{session['admin']}}]"
                         ).selected = true;

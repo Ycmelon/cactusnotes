@@ -1,4 +1,5 @@
 import os
+from json import loads
 from functools import wraps
 from bson import ObjectId
 from flask import (
@@ -33,6 +34,8 @@ extension_blueprint = Blueprint("extension", __name__, url_prefix="/extension")
 DOMAIN = (
     "cactusnotes.co" if os.environ.get("MODE") == "production" else "localhost:5000"
 )
+
+ADMINS = loads(os.environ["ADMINS"])  # {"Name": "id"}
 
 
 def requires_admin(f):
@@ -80,7 +83,9 @@ def get_customer():
     customer["documents"] = get_documents_from_transactions(customer["transactions"])
 
     # THEN, get customer analytics
-    analytics = list(db.analytics.find({"customer": username}).sort("timestamp", DESCENDING))
+    analytics = list(
+        db.analytics.find({"customer": username}).sort("timestamp", DESCENDING)
+    )
     download_data = {}
     heatmap_data = {}
     for i in analytics:
@@ -96,6 +101,7 @@ def get_customer():
     return render_template(
         "extension/chat.html",
         domain=DOMAIN,
+        admins=ADMINS,
         **customer,
         analytics=analytics,
         download_data=download_data,
@@ -152,13 +158,13 @@ def update():
                 additions[doc].append(chapter)
 
     # splitting formula
-    split = {
-        "marcus": 0.6 if request.form["admin"] == "marcus" else 0.1,
-        "ethan": 0.6 if request.form["admin"] == "ethan" else 0.1,
-        "yc": 0.6 if request.form["admin"] == "yc" else 0.1,
-        "jason": 0.6 if request.form["admin"] == "jason" else 0.1,
-        "jx": 0.6 if request.form["admin"] == "jx" else 0.1,
-    }
+    split = {}
+    admin_count = len(ADMINS)
+    for admin in ADMINS.values():
+        if admin == request.form["admin"]:
+            split[admin] = 0.5 + (0.5 / admin_count)
+        else:
+            split[admin] = 0.5 / admin_count
 
     info = {
         "username": username,
