@@ -2,6 +2,8 @@
 
 Website and extension for managing sales
 
+[User guide](https://docs.google.com/document/d/1B76O2mhNhj8qFLs3XYrjLXtqfVBZQx7r_wJJLY7qeyA/edit?usp=sharing)
+
 ## Development setup
 
 1. Create a venv; install dependencies from requirements.txt
