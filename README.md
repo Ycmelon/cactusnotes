@@ -1,20 +1,19 @@
-# Cactusnotes sales portal
+# Cactusnotes sales management platform
 
-Website and extension for managing sales
+Website to handle sales, track payments, split PDFs, password-protect & distribute PDFs
 
-[User guide (private)](https://docs.google.com/document/d/1B76O2mhNhj8qFLs3XYrjLXtqfVBZQx7r_wJJLY7qeyA/edit?usp=sharing)
+https://github.com/user-attachments/assets/3363f6a7-a66a-4ba8-be90-488ad51f2af9
 
-## Development setup
+## Features
 
-1. Create a venv; install dependencies from requirements.txt
-2. Set environment variables (e.g. in activate file)
-   - Set "MODE" to "testing"
-   - Set "MONGODB_URI"
+- Track customer payments and team payouts
+- Password protect file downloads
+- Split PDFs automatically by predefined chapters, e.g. distribute only chapters 3-5 of a given file
 
 ## Production setup (for future self)
 
 1. Follow [this tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-22-04)
-2. `git pull` this repository using Personal Access Token
+2. `git clone` this repository
 3. Install Python requirements from `requirements.txt`
 4. [Install rclone](https://rclone.org/install/#script-installation)
 5. Add `/usr/bin` to PATH so rclone is accessible by the Python app (modify `cactusnotes.service`, [help](https://stackoverflow.com/a/21131629/10546571))
@@ -24,6 +23,6 @@ Website and extension for managing sales
 
 ## Updating notes procedure
 
-1. Update the file in Google Drive (make sure its the same file name, or else change the filename in the database)
+1. Update the file in Google Drive (make sure it's the same file name, or else change the filename in the database)
 2. In database, update chapter pages if necessary, and chapter notes if necessary
-3. Restart server (`sudo systemctl restart cactusnotes`) so that files are updated and document info is refreshed
+3. Restart server so that files are updated and document info is refreshed
