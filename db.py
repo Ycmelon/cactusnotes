@@ -3,11 +3,14 @@ from pymongo.server_api import ServerApi
 import os
 import certifi
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-# load_dotenv()
+load_dotenv()
 
-uri = f"mongodb+srv://kektwos:{os.environ.get('DATABASE_PW')}@cluster0.lctumyt.mongodb.net/?retryWrites=true&w=majority"
+uri = os.environ.get("MONGODB_URI")
+if not uri:
+    raise KeyError("No MongoDB URI specified")
+
 client = MongoClient(
     uri,
     server_api=ServerApi("1"),
