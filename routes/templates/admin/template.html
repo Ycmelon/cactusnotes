@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     {% block head %}
-    <title>{% block title %}{% endblock %} - Cactusnotes</title>
+    <title>
+      {% block title %}{% endblock %} - {{ config["WEBSITE_NAME"] }}
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
     <link
@@ -25,7 +27,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/admin">Cactusnotes </a>
+        <a class="navbar-brand" href="/admin">{{ config["WEBSITE_NAME"] }} </a>
       </div>
     </nav>
     <div class="container mt-4" style="max-width: 800px">

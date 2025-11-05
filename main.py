@@ -1,7 +1,5 @@
 import os
-import secrets
 from flask import Flask, redirect
-from flask_cors import CORS
 
 from dotenv import load_dotenv
 
@@ -44,6 +42,10 @@ app.jinja_env.filters["get_datetimelocal_from_timestamp"] = (
     get_datetimelocal_from_timestamp
 )
 
+# globals
+app.config["WEBSITE_NAME"] = os.environ["WEBSITE_NAME"]
+app.config["WEBSITE_DOMAIN"] = os.environ["WEBSITE_DOMAIN"]
+
 
 app.register_blueprint(admin_blueprint)
 app.register_blueprint(extension_blueprint)
@@ -54,7 +56,7 @@ app.register_blueprint(customer_blueprint)
 def get_script():  # tampermonkey script
     domain = "http://localhost:5000"
     if os.environ.get("MODE") == "production":
-        domain = "https://cactusnotes.co"
+        domain = f"https://{app.config['WEBSITE_URL']}"
 
     with open("./extension/script.js", "r") as file:
         script = file.read().replace("{{ domain }}", domain)

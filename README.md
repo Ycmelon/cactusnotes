@@ -2,14 +2,14 @@
 
 Website and extension for managing sales
 
-[User guide](https://docs.google.com/document/d/1B76O2mhNhj8qFLs3XYrjLXtqfVBZQx7r_wJJLY7qeyA/edit?usp=sharing)
+[User guide (private)](https://docs.google.com/document/d/1B76O2mhNhj8qFLs3XYrjLXtqfVBZQx7r_wJJLY7qeyA/edit?usp=sharing)
 
 ## Development setup
 
 1. Create a venv; install dependencies from requirements.txt
 2. Set environment variables (e.g. in activate file)
    - Set "MODE" to "testing"
-   - Set "DATABASE_PW"
+   - Set "MONGODB_URI"
 
 ## Production setup (for future self)
 

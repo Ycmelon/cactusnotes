@@ -32,7 +32,9 @@ extension_blueprint = Blueprint("extension", __name__, url_prefix="/extension")
 
 
 DOMAIN = (
-    "cactusnotes.co" if os.environ.get("MODE") == "production" else "localhost:5000"
+    os.environ["WEBSITE_DOMAIN"]
+    if os.environ.get("MODE") == "production"
+    else "localhost:5000"
 )
 
 ADMINS = loads(os.environ["ADMINS"])  # {"Name": "id"}

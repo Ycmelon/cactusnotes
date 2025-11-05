@@ -12,8 +12,12 @@
   "
 >
   <div style="max-width: 300px; text-align: center">
-    <img src="static/logo.png" height="35px" alt="Cactusnotes logo" />
-    <h1>cactusnotes</h1>
+    <img
+      src="static/logo.png"
+      height="35px"
+      alt="{{ config['WEBSITE_NAME'] }} logo"
+    />
+    <h1>{{ config["WEBSITE_NAME"] }}</h1>
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %}
     <div class="alert alert-{{category}}" role="alert">{{message}}</div>

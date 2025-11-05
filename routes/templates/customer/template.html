@@ -3,7 +3,9 @@
   <head>
     {% block head %}
     <!-- <link rel="stylesheet" href="style.css" /> -->
-    <title>{% block title %}{% endblock %} - Cactusnotes</title>
+    <title>
+      {% block title %}{% endblock %} - {{ config["WEBSITE_NAME"] }}
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
     <link
